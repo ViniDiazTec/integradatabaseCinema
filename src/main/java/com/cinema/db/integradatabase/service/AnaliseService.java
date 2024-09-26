@@ -2,6 +2,7 @@ package com.cinema.db.integradatabase.service;
 
 import com.cinema.db.integradatabase.data.AnaliseEntity;
 import com.cinema.db.integradatabase.data.AnaliseRepository;
+import com.cinema.db.integradatabase.exception.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,25 +21,23 @@ public class AnaliseService {
         return analiseRepository.save(an); // Usar o método do repositório para salvar
     }
 
-    // Método para atualizar uma análise existente
+// Método para atualizar uma análise existente
     public AnaliseEntity atualizarAnalise(Integer anId, AnaliseEntity analiseRequest) {
-        // Busca a análise existente pelo ID
+        // Busca a análise existente pelo ID, se não existir lança ResourceNotFoundException
         AnaliseEntity an = getAnaliseId(anId);
-        if (an != null) {
-            // Atualiza os campos desejados
-            an.setFilme(analiseRequest.getFilme());
-            an.setNota(analiseRequest.getNota());
-            an.setComentario(analiseRequest.getComentario());
-            // Salva as mudanças no banco
-            return analiseRepository.save(an);
-        } else {
-            return null; // Retorna null se a análise não for encontrada
-        }
+
+        // Atualiza os campos da análise com os dados do request
+        an.setFilme(analiseRequest.getFilme());
+        an.setNota(analiseRequest.getNota());
+        an.setComentario(analiseRequest.getComentario());
+
+        // Salva as mudanças no banco de dados
+        return analiseRepository.save(an);
     }
 
     // Método para buscar uma análise por ID
     public AnaliseEntity getAnaliseId(Integer anId) {
-        return analiseRepository.findById(anId).orElse(null); // Retorna a análise ou null
+        return analiseRepository.findById(anId).orElseThrow(() -> new ResourceNotFoundException("Analise não encontrada " + anId));
     }
 
     // Método para listar todas as análises
