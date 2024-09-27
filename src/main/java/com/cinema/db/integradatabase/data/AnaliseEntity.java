@@ -16,11 +16,11 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Analise")
+@Table(name = "analises")
 public class AnaliseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne

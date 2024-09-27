@@ -16,17 +16,17 @@ import lombok.Data;
 public class FilmeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotBlank(message = "O título é obrigatório")
     @Size(max = 100, message = "O título deve ter no máximo 100 caracteres")
     private String titulo;
-    
+
     @NotBlank(message = "O gênero é obrigatório")
-    @Size(max = 50, message = "O gênero deve ter no máximo 50 caracteres") 
+    @Size(max = 50, message = "O gênero deve ter no máximo 50 caracteres")
     private String genero;
-    
+
     @Min(value = 1888, message = "Ano de lançamento inválido") // o primeiro filme do mundo foi la~çado em 1888 
     private Integer anoLancamento;
 
