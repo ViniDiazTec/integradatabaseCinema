@@ -27,7 +27,9 @@ public class FilmeEntity {
     @Size(max = 50, message = "O gênero deve ter no máximo 50 caracteres")
     private String genero;
 
-    @Min(value = 1888, message = "Ano de lançamento inválido") // o primeiro filme do mundo foi la~çado em 1888 
+    @Min(value = 1888, message = "Ano de lançamento inválido") // o primeiro filme do mundo foi lançado em 1888
     private Integer anoLancamento;
 
+    @Size(max = 1000, message = "A sinopse deve ter no máximo 1000 caracteres")
+    private String sinopse;
 }

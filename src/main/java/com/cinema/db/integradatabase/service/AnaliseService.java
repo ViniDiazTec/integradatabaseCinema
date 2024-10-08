@@ -21,9 +21,9 @@ public class AnaliseService {
         return analiseRepository.save(an); // Usar o método do repositório para salvar
     }
 
-// Método para atualizar uma análise existente
+    // Método para atualizar uma análise existente
     public AnaliseEntity atualizarAnalise(Integer anId, AnaliseEntity analiseRequest) {
-        // Busca a análise existente pelo ID, se não existir lança ResourceNotFoundException
+        // Busca a análise existente pelo ID, se não existir, lança ResourceNotFoundException
         AnaliseEntity an = getAnaliseId(anId);
 
         // Atualiza os campos da análise com os dados do request
@@ -37,7 +37,8 @@ public class AnaliseService {
 
     // Método para buscar uma análise por ID
     public AnaliseEntity getAnaliseId(Integer anId) {
-        return analiseRepository.findById(anId).orElseThrow(() -> new ResourceNotFoundException("Analise não encontrada " + anId));
+        return analiseRepository.findById(anId)
+                .orElseThrow(() -> new ResourceNotFoundException("Análise não encontrada: " + anId));
     }
 
     // Método para listar todas as análises
@@ -48,8 +49,7 @@ public class AnaliseService {
     // Método para deletar uma análise
     public void deletarAnalise(Integer anId) {
         AnaliseEntity an = getAnaliseId(anId);
-        if (an != null) {
-            analiseRepository.deleteById(anId); // Remove a análise pelo ID
-        }
+        analiseRepository.delete(an); // Remove a análise pelo ID
     }
+
 }

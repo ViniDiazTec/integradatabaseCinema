@@ -14,10 +14,13 @@ public class FilmeService {
     @Autowired
     private FilmeRepository filmeRepository;
 
+    @Autowired
+    private AnaliseService analiseService; // Injetar o serviço de análises
+
     // Método para criar um novo filme
     public FilmeEntity criarFilme(FilmeEntity filme) {
         filme.setId(null); // Garantir que o ID seja nulo para criar uma nova entrada
-        return filmeRepository.save(filme);// Usar o método do repositório para salvar
+        return filmeRepository.save(filme); // Usar o método do repositório para salvar
     }
 
     // Método para atualizar um filme existente
@@ -28,6 +31,7 @@ public class FilmeService {
         filme.setTitulo(filmeAtualizado.getTitulo());
         filme.setGenero(filmeAtualizado.getGenero());
         filme.setAnoLancamento(filmeAtualizado.getAnoLancamento());
+        filme.setSinopse(filmeAtualizado.getSinopse()); // Atualiza a sinopse
 
         // Salva as mudanças no banco de dados
         return filmeRepository.save(filme);
@@ -36,7 +40,7 @@ public class FilmeService {
     // Método para buscar um filme por ID
     public FilmeEntity buscarPorId(Integer id) {
         return filmeRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Filme não encontrado " + id));
     }
 
     // Método para listar todos os filmes
@@ -44,9 +48,4 @@ public class FilmeService {
         return filmeRepository.findAll();
     }
 
-    // Método para deletar um filme
-    public void deletarFilme(Integer id) {
-        FilmeEntity filme = buscarPorId(id); // Busca o filme antes de deletar
-        filmeRepository.deleteById(filme.getId()); // Remove o filme pelo ID
-    }
 }

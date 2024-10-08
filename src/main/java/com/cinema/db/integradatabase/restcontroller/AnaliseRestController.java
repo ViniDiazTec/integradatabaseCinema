@@ -1,4 +1,4 @@
-package com.cinema.db.integradatabase.controller;
+package com.cinema.db.integradatabase.restcontroller;
 
 import com.cinema.db.integradatabase.data.AnaliseEntity;
 import com.cinema.db.integradatabase.service.AnaliseService;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/analises") // Define o endpoint base para esse controlador
-public class AnaliseController {
+@RequestMapping("/api/analises") // Prefixo 'api' para diferenciar as rotas
+public class AnaliseRestController {
 
     @Autowired
     private AnaliseService analiseService; // Injeta o serviço de análise para manipulação dos dados
@@ -36,30 +36,29 @@ public class AnaliseController {
 
     // Método para adicionar uma nova análise
     @PostMapping("/adicionar")
-    public ResponseEntity<AnaliseEntity> addAnalise(@Valid @RequestBody AnaliseEntity analise) {
+    public ResponseEntity<?> addAnalise(@Valid @RequestBody AnaliseEntity analise) {
         AnaliseEntity novaAnalise = analiseService.criarAnalise(analise); // Chama o serviço para criar uma nova análise
-        return new ResponseEntity<>(novaAnalise, HttpStatus.CREATED); // Retorna a nova análise criada com status 201 CREATED
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaAnalise); // Retorna a nova análise criada com status 201 CREATED
     }
 
     // Método para atualizar uma análise existente
     @PutMapping("/atualizar/{id}")
-    public ResponseEntity<AnaliseEntity> atualizarAnalise(@PathVariable Integer id, @Valid @RequestBody AnaliseEntity analise) {
+    public ResponseEntity<?> atualizarAnalise(@PathVariable Integer id, @Valid @RequestBody AnaliseEntity analise) {
         AnaliseEntity analiseAtualizada = analiseService.atualizarAnalise(id, analise); // Chama o serviço para atualizar a análise
         if (analiseAtualizada != null) {
-            return new ResponseEntity<>(analiseAtualizada, HttpStatus.OK); // Se a análise foi atualizada, retorna status 200 OK
+            return ResponseEntity.ok(analiseAtualizada); // Se a análise foi atualizada, retorna status 200 OK
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Se a análise não foi encontrada, retorna 404 NOT FOUND
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Análise não encontrada"); // Se a análise não foi encontrada, retorna 404 NOT FOUND
     }
 
     // Método para deletar uma análise
     @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<Void> deletarAnalise(@PathVariable Integer id) {
-        AnaliseEntity analise = analiseService.getAnaliseId(id); // Verifica se a análise existe antes de deletar
-        if (analise != null) {
+    public ResponseEntity<?> deletarAnalise(@PathVariable Integer id) {
+        if (analiseService.getAnaliseId(id) != null) { // Verifica se a análise existe antes de deletar
             analiseService.deletarAnalise(id); // Chama o serviço para deletar a análise pelo ID
-            return new ResponseEntity<>(HttpStatus.OK); // Se deletada, retorna status 200 OK
+            return ResponseEntity.ok("Análise deletada com sucesso"); // Se deletada, retorna status 200 OK
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Se não encontrada, retorna 404 NOT FOUND
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Análise não encontrada"); // Se não encontrada, retorna 404 NOT FOUND
         }
     }
 }
