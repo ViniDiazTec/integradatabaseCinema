@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Novo Filme</title>
+    
+    <!-- Link para o Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos personalizados -->
+    <style>
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Cadastrar Novo Filme</h1>
+
+        <!-- Formulário para Cadastrar Novo Filme -->
+        <form id="cadastroFilmeForm" method="post" action="/filmes/salvar" class="row g-3">
+            <div class="col-md-6">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" id="titulo" class="form-control" name="titulo" required>
+            </div>
+
+            <div class="col-md-12">
+                <label for="sinopse" class="form-label">Sinopse</label>
+                <textarea id="sinopse" class="form-control" name="sinopse" rows="4" required></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label for="genero" class="form-label">Gênero</label>
+                <input type="text" id="genero" class="form-control" name="genero" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="anoLancamento" class="form-label">Ano de Lançamento</label>
+                <input type="number" id="anoLancamento" class="form-control" name="anoLancamento" required>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Salvar Filme</button>
+            </div>
+        </form>
+
+        <a class="btn btn-secondary mt-4" href="/filmes">Voltar à lista de filmes</a>
+    </div>
+
+    <!-- Scripts do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery para facilitar o uso do AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Script para tratar o envio do formulário -->
+    <script>
+        $(document).ready(function () {
+            $('#cadastroFilmeForm').on('submit', function (event) {
+                event.preventDefault(); // Impede o envio padrão do formulário
+
+                const filmeData = {
+                    titulo: $('#titulo').val(),
+                    sinopse: $('#sinopse').val(),
+                    genero: $('#genero').val(),
+                    anoLancamento: $('#anoLancamento').val()
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/filmes/adicionar', // Certifique-se de usar o caminho correto para a API
+                    contentType: 'application/json',
+                    data: JSON.stringify(filmeData),
+                    success: function (response) {
+                        alert('Filme cadastrado com sucesso!'); // Mensagem de sucesso
+                        window.location.href = '/filmes'; // Redireciona para a lista de filmes
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Erro ao cadastrar filme: ' + xhr.responseText); // Mensagem de erro
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

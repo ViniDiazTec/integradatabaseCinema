@@ -4,15 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Filme</title>
+    
+    <!-- Link para o Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos personalizados -->
+    <style>
+        .analise-item {
+            margin-bottom: 15px;
+        }
+        .analise-preview {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            transition: max-height 0.5s ease;
+            height: 50px; /* Altura inicial da prévia */
+        }
+
+        .analise-item:hover .analise-preview {
+            height: auto; /* Expande para mostrar mais da análise ao passar o mouse */
+            max-height: 300px; /* Limita a altura máxima expandida */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1 class="my-4" th:text="${filme.id != null ? 'Editar Filme' : 'Cadastrar Novo Filme'}"></h1>
-
-        <!-- Mensagens de Sucesso e Erro -->
-        <div th:if="${mensagemSucesso}" class="alert alert-success" th:text="${mensagemSucesso}"></div>
-        <div th:if="${mensagemErro}" class="alert alert-danger" th:text="${mensagemErro}"></div>
 
         <!-- Formulário para Editar ou Cadastrar Filme -->
         <form id="detalhesFilmeForm" method="post" action="/filmes/salvar" class="row g-3">
@@ -43,18 +61,30 @@
             </div>
         </form>
 
-        <h2 class="my-4">Adicionar Análise</h2>
+        <h2 class="my-4">Análises do Filme</h2>
 
-        <!-- Mensagens de Sucesso e Erro para Análises -->
-        <div th:if="${mensagemSucessoAnalise}" class="alert alert-success" th:text="${mensagemSucessoAnalise}"></div>
-        <div th:if="${mensagemErroAnalise}" class="alert alert-danger" th:text="${mensagemErroAnalise}"></div>
+        <!-- Validação: Se o filme não possui análises -->
+        <div th:if="${filme.analises == null || #lists.isEmpty(filme.analises)}" class="alert alert-info">
+            Nenhuma análise disponível para este filme.
+        </div>
 
+        <!-- Lista de análises vinculadas ao filme -->
+        <div class="list-group" th:if="${filme.analises != null && !#lists.isEmpty(filme.analises)}">
+            <div class="list-group-item analise-item" th:each="analise : ${filme.analises}">
+                <p class="analise-preview" th:text="${analise.comentario}"></p>
+                <small class="text-muted">Nota: <span th:text="${analise.nota}"></span>/10</small>
+            </div>
+        </div>
+
+        <h2 class="my-4">Adicionar Nova Análise</h2>
+
+        <!-- Formulário para adicionar nova análise -->
         <form id="analiseForm" method="post" action="/filmes/adicionar-analise" class="row g-3">
             <input type="hidden" name="filmeId" th:value="${filme.id}">
 
             <div class="col-md-12">
                 <label for="analise" class="form-label">Análise</label>
-                <textarea class="form-control" name="texto" rows="3" required maxlength="500" placeholder="Escreva sua análise aqui..."></textarea>
+                <textarea class="form-control" name="comentario" rows="3" required maxlength="500" placeholder="Escreva sua análise aqui..."></textarea>
             </div>
 
             <div class="col-md-4">
@@ -67,14 +97,12 @@
             </div>
         </form>
 
-        <div id="analisesContainer" class="my-4">
-            <!-- Conteúdo das análises será adicionado aqui via JS -->
-        </div>
-
         <a class="btn btn-secondary mt-4" href="/filmes">Voltar à lista de filmes</a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/jquery.min.js"></script>
-    <script src="/static/js/analiseScript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/analises.js"></script>
+    <script src="/static/js/filmes.js"></script>
 </body>
 </html>

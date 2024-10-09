@@ -20,20 +20,18 @@ public class FilmeService {
     // Método para criar um novo filme
     public FilmeEntity criarFilme(FilmeEntity filme) {
         filme.setId(null); // Garantir que o ID seja nulo para criar uma nova entrada
-        return filmeRepository.save(filme); // Usar o método do repositório para salvar
+        return filmeRepository.save(filme);
     }
 
     // Método para atualizar um filme existente
     public FilmeEntity atualizarFilme(Integer id, FilmeEntity filmeAtualizado) {
-        FilmeEntity filme = buscarPorId(id); // Busca o filme pelo ID, lança exceção se não encontrado
+        FilmeEntity filme = buscarPorId(id); // Busca o filme pelo ID
 
-        // Atualiza os campos do filme com os dados do request
         filme.setTitulo(filmeAtualizado.getTitulo());
         filme.setGenero(filmeAtualizado.getGenero());
         filme.setAnoLancamento(filmeAtualizado.getAnoLancamento());
         filme.setSinopse(filmeAtualizado.getSinopse()); // Atualiza a sinopse
 
-        // Salva as mudanças no banco de dados
         return filmeRepository.save(filme);
     }
 
@@ -48,4 +46,8 @@ public class FilmeService {
         return filmeRepository.findAll();
     }
 
+    // Método para excluir um filme existente
+    public void excluirFilme(Integer id) {
+        filmeRepository.deleteById(id); // Chama o método do repositório para excluir
+    }
 }

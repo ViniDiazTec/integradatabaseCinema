@@ -3,7 +3,6 @@ package com.cinema.db.integradatabase.service;
 import com.cinema.db.integradatabase.data.AnaliseEntity;
 import com.cinema.db.integradatabase.data.AnaliseRepository;
 import com.cinema.db.integradatabase.exception.ResourceNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +22,13 @@ public class AnaliseService {
 
     // Método para atualizar uma análise existente
     public AnaliseEntity atualizarAnalise(Integer anId, AnaliseEntity analiseRequest) {
-        // Busca a análise existente pelo ID, se não existir, lança ResourceNotFoundException
-        AnaliseEntity an = getAnaliseId(anId);
+        AnaliseEntity an = getAnaliseId(anId); // Busca a análise pelo ID
 
-        // Atualiza os campos da análise com os dados do request
         an.setFilme(analiseRequest.getFilme());
         an.setNota(analiseRequest.getNota());
         an.setComentario(analiseRequest.getComentario());
 
-        // Salva as mudanças no banco de dados
-        return analiseRepository.save(an);
+        return analiseRepository.save(an); // Salva as mudanças no banco de dados
     }
 
     // Método para buscar uma análise por ID
@@ -48,8 +44,7 @@ public class AnaliseService {
 
     // Método para deletar uma análise
     public void deletarAnalise(Integer anId) {
-        AnaliseEntity an = getAnaliseId(anId);
-        analiseRepository.delete(an); // Remove a análise pelo ID
+        getAnaliseId(anId); // Verifica se a análise existe
+        analiseRepository.deleteById(anId); // Remove a análise pelo ID
     }
-
 }

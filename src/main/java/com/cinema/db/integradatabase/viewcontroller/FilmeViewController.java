@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
-import org.springframework.dao.DataIntegrityViolationException;
 
 @Controller
 @RequestMapping("/filmes")
@@ -35,8 +34,8 @@ public class FilmeViewController {
     // Exibe a página para cadastrar um novo filme
     @GetMapping("/cadastro")
     public String mostrarCadastro(Model model) {
-        model.addAttribute("filme", new FilmeEntity()); // Cria um novo objeto FilmeEntity
-        return "FilmeDetalheEditaAnalise"; // Retorna a página para cadastro
+        model.addAttribute("filme", new FilmeEntity());
+        return "FilmeCadastro";
     }
 
     // Salva um novo filme ou atualiza um filme existente
@@ -44,12 +43,18 @@ public class FilmeViewController {
     public String salvarFilme(@Valid FilmeEntity filme, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("filme", filme);
-            return "FilmeDetalheEditaAnalise"; // Retorna para a página de edição em caso de erro
+            return "FilmeDetalheEditaAnalise";
         }
 
-        filmeService.criarFilme(filme);
-        model.addAttribute("mensagemSucesso", "Filme salvo com sucesso!");
-        return "redirect:/filmes";  // Redireciona para a lista após o salvamento
+        if (filme.getId() == null) {
+            filmeService.criarFilme(filme);
+            model.addAttribute("mensagemSucesso", "Filme salvo com sucesso!");
+        } else {
+            filmeService.atualizarFilme(filme.getId(), filme);
+            model.addAttribute("mensagemSucesso", "Filme atualizado com sucesso!");
+        }
+
+        return "redirect:/filmes";
     }
 
     // Exibe a página de detalhes para editar um filme
@@ -65,34 +70,37 @@ public class FilmeViewController {
 
     // Método para salvar uma análise
     @PostMapping("/adicionar-analise")
-    public String adicionarAnalise(@RequestParam Integer filmeId, @RequestParam String texto, @RequestParam Integer nota, Model model) {
-        // Verifica se o texto possui pelo menos 10 caracteres
-        if (texto.length() < 10) {
+    public String adicionarAnalise(@RequestParam Integer filmeId, @RequestParam String comentario, @RequestParam Integer nota, Model model) {
+        if (comentario.length() < 10) {
             model.addAttribute("mensagemErroAnalise", "O comentário deve ter no mínimo 10 caracteres.");
-            return "redirect:/filmes/detalhe-editar?filmeId=" + filmeId; // Retorna à página de edição do filme
+            return "redirect:/filmes/detalhe-editar?filmeId=" + filmeId;
         }
 
-        // Verifica se a nota está entre 1 e 10
         if (nota < 1 || nota > 10) {
             model.addAttribute("mensagemErroAnalise", "A nota deve estar entre 1 e 10.");
-            return "redirect:/filmes/detalhe-editar?filmeId=" + filmeId; // Retorna à página de edição do filme
+            return "redirect:/filmes/detalhe-editar?filmeId=" + filmeId;
         }
 
-        // Cria uma nova análise
         AnaliseEntity analise = new AnaliseEntity();
         FilmeEntity filme = filmeService.buscarPorId(filmeId);
+        analise.setFilme(filme);
+        analise.setComentario(comentario);
+        analise.setNota(nota);
 
-        analise.setFilme(filme); // Define o filme relacionado à análise
-        analise.setComentario(texto); // Define o texto da análise
-        analise.setNota(nota); // Define a nota da análise
-
-        // Salva a análise utilizando o serviço
         analiseService.criarAnalise(analise);
-
         model.addAttribute("mensagemSucessoAnalise", "Análise salva com sucesso!");
-        return "redirect:/filmes/detalhe-editar?filmeId=" + filmeId; // Redireciona para a página de edição do filme
+        return "redirect:/filmes/detalhe-editar?filmeId=" + filmeId;
     }
 
-    // Método para excluir um filme
-
+    // Método para excluir um filme existente
+    @PostMapping("/excluir")
+    public String excluirFilme(@RequestParam("filmeId") Integer filmeId, Model model) {
+        try {
+            filmeService.excluirFilme(filmeId);
+            model.addAttribute("mensagemSucesso", "Filme excluído com sucesso!");
+        } catch (Exception e) {
+            model.addAttribute("mensagemErro", "Erro ao excluir o filme: " + e.getMessage());
+        }
+        return "redirect:/filmes";
+    }
 }

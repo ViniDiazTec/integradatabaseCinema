@@ -17,36 +17,35 @@ public class FilmeRestController {
     @Autowired
     private FilmeService filmeService;
 
+    // Retorna a lista de todos os filmes
     @GetMapping("/listar")
     public ResponseEntity<List<FilmeEntity>> getAllFilmes() {
         return new ResponseEntity<>(filmeService.listarTodos(), HttpStatus.OK);
     }
 
+    // Retorna um filme pelo ID
     @GetMapping("/pesquisar/{id}")
     public ResponseEntity<FilmeEntity> getFilmeById(@PathVariable Integer id) {
         FilmeEntity filme = filmeService.buscarPorId(id);
-        if (filme != null) {
-            return new ResponseEntity<>(filme, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return filme != null ? new ResponseEntity<>(filme, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    // Adiciona um novo filme
     @PostMapping("/adicionar")
     public ResponseEntity<FilmeEntity> addFilme(@Valid @RequestBody FilmeEntity filme) {
         FilmeEntity novoFilme = filmeService.criarFilme(filme);
         return new ResponseEntity<>(novoFilme, HttpStatus.CREATED);
     }
 
+    // Atualiza um filme existente
     @PutMapping("/atualizar/{id}")
     public ResponseEntity<FilmeEntity> atualizarFilme(@PathVariable Integer id, @Valid @RequestBody FilmeEntity filme) {
         FilmeEntity filmeAtualizado = filmeService.atualizarFilme(id, filme);
-        if (filmeAtualizado != null) {
-            return new ResponseEntity<>(filmeAtualizado, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return filmeAtualizado != null ? new ResponseEntity<>(filmeAtualizado, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    /*@DeleteMapping("/deletar/{id}")
+    /*// Método para deletar um filme
+    @DeleteMapping("/deletar/{id}")
     public ResponseEntity<Void> deletarFilme(@PathVariable Integer id) {
         FilmeEntity filme = filmeService.buscarPorId(id);
         if (filme != null) {
