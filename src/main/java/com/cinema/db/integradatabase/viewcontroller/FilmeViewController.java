@@ -25,16 +25,24 @@ public class FilmeViewController {
 
     // Exibe a lista de filmes
     @GetMapping
-    public String listarFilmes(Model model) {
+    public String listarFilmes(@CookieValue(name = "pref-nome", defaultValue = "") String nome,
+            @CookieValue(name = "pref-estilo", defaultValue = "claro") String tema,
+            Model model) {
         List<FilmeEntity> filmes = filmeService.listarTodos();
         model.addAttribute("filmes", filmes);
+        model.addAttribute("nome", nome);
+        model.addAttribute("css", tema);
         return "FilmeListar";
     }
 
     // Exibe a página para cadastrar um novo filme
     @GetMapping("/cadastro")
-    public String mostrarCadastro(Model model) {
+    public String mostrarCadastro(@CookieValue(name = "pref-nome", defaultValue = "") String nome,
+            @CookieValue(name = "pref-estilo", defaultValue = "claro") String tema,
+            Model model) {
         model.addAttribute("filme", new FilmeEntity());
+        model.addAttribute("nome", nome);
+        model.addAttribute("css", tema);
         return "FilmeCadastro";
     }
 
@@ -59,12 +67,17 @@ public class FilmeViewController {
 
     // Exibe a página de detalhes para editar um filme
     @GetMapping("/detalhe-editar")
-    public String editarFilme(@RequestParam("filmeId") Integer filmeId, Model model) {
+    public String editarFilme(@RequestParam("filmeId") Integer filmeId,
+            @CookieValue(name = "pref-nome", defaultValue = "") String nome,
+            @CookieValue(name = "pref-estilo", defaultValue = "claro") String tema,
+            Model model) {
         FilmeEntity filme = filmeService.buscarPorId(filmeId);
         if (filme == null) {
             return "redirect:/filmes";
         }
         model.addAttribute("filme", filme);
+        model.addAttribute("nome", nome);
+        model.addAttribute("css", tema);
         return "FilmeDetalheEditaAnalise";
     }
 
@@ -94,13 +107,18 @@ public class FilmeViewController {
 
     // Método para excluir um filme existente
     @PostMapping("/excluir")
-    public String excluirFilme(@RequestParam("filmeId") Integer filmeId, Model model) {
+    public String excluirFilme(@RequestParam("filmeId") Integer filmeId,
+            @CookieValue(name = "pref-nome", defaultValue = "") String nome,
+            @CookieValue(name = "pref-estilo", defaultValue = "claro") String tema,
+            Model model) {
         try {
             filmeService.excluirFilme(filmeId);
             model.addAttribute("mensagemSucesso", "Filme excluído com sucesso!");
         } catch (Exception e) {
             model.addAttribute("mensagemErro", "Erro ao excluir o filme: " + e.getMessage());
         }
+        model.addAttribute("nome", nome);
+        model.addAttribute("css", tema);
         return "redirect:/filmes";
     }
 }
